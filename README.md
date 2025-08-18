@@ -7,6 +7,13 @@ derived from [https://github.com/akrylysov/pogreb-bench](https://github.com/akry
 
 ## Usage
 
+Use makefile to build kv-bench
+
+```bash
+make build
+./bin/kv-bench
+```
+
 build kv-bench binary.
 
 ```bash

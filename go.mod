@@ -1,13 +1,13 @@
 module github.com/akrylysov/pogreb-bench
 
-go 1.18
+go 1.19
 
 require (
 	github.com/akrylysov/pogreb v0.10.0
 	github.com/cockroachdb/pebble v0.0.0-20230721221451-fcaeb47a50e0
 	github.com/dgraph-io/badger/v4 v4.1.0
 	github.com/lotusdblabs/lotusdb/v2 v2.0.0-20230811105431-e2453dcba057
-	github.com/nutsdb/nutsdb v1.0.1
+	github.com/nutsdb/nutsdb v1.0.4
 	github.com/pkg/profile v1.4.0
 	github.com/rosedblabs/rosedb/v2 v2.2.2-0.20230728140315-2e1cfd7cf460
 	github.com/syndtr/goleveldb v1.0.0
@@ -55,6 +55,6 @@ require (
 	go.opencensus.io v0.22.5 // indirect
 	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1 // indirect
 	golang.org/x/net v0.12.0 // indirect
-	golang.org/x/sys v0.10.0 // indirect
+	golang.org/x/sys v0.15.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 )

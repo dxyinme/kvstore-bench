@@ -3,7 +3,7 @@
 all: build
 
 build:
-	@cd cmd/kv-bench/ && go build . && mv kv-bench ../..
+	@mkdir -p bin && cd cmd/kv-bench && go build -o ../../bin/kv-bench
 
 clean:
 	@rm -rf kv-bench

@@ -10,13 +10,7 @@ type nutsdbStore struct {
 
 const Bucket = "Bucket"
 
-func newNutsDB(path string) (Store, error) {
-	options := nutsdb.DefaultOptions
-	options.Dir = path
-	options.EntryIdxMode = nutsdb.HintKeyAndRAMIdxMode
-	options.SyncEnable = false
-	options.HintKeyAndRAMIdxCacheSize = 0
-
+func newNutsDBCommon(path string, options nutsdb.Options) (Store, error) {
 	db, err := nutsdb.Open(options)
 	if err != nil {
 		return nil, err
@@ -30,6 +24,25 @@ func newNutsDB(path string) (Store, error) {
 	}
 
 	return &nutsdbStore{db: db}, nil
+}
+
+func newNutsDB(path string) (Store, error) {
+	options := nutsdb.DefaultOptions
+	options.Dir = path
+	options.EntryIdxMode = nutsdb.HintKeyAndRAMIdxMode
+	options.SyncEnable = false
+	options.HintKeyAndRAMIdxCacheSize = 0
+	return newNutsDBCommon(path, options)
+}
+
+func newNutsDBMmap(path string) (Store, error) {
+	options := nutsdb.DefaultOptions
+	options.Dir = path
+	options.EntryIdxMode = nutsdb.HintKeyAndRAMIdxMode
+	options.SyncEnable = false
+	options.HintKeyAndRAMIdxCacheSize = 0
+	options.RWMode = nutsdb.MMap
+	return newNutsDBCommon(path, options)
 }
 
 func (n nutsdbStore) Put(key []byte, value []byte) error {

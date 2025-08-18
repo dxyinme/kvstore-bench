@@ -12,14 +12,15 @@ type Store interface {
 }
 
 var stores = map[string]func(string) (Store, error){
-	"pogreb":    newPogreb,
-	"goleveldb": newGoleveldb,
-	"bbolt":     newBbolt,
-	"badger":    newBadger,
-	"rosedb":    newRoseDB,
-	"lotusdb":   newLotusDB,
-	"pebble":    newPebble,
-	"nutsdb":    newNutsDB,
+	"pogreb":      newPogreb,
+	"goleveldb":   newGoleveldb,
+	"bbolt":       newBbolt,
+	"badger":      newBadger,
+	"rosedb":      newRoseDB,
+	"lotusdb":     newLotusDB,
+	"pebble":      newPebble,
+	"nutsdb":      newNutsDB,
+	"nutsdb_mmap": newNutsDBMmap,
 }
 
 func NewStore(name string, path string) (Store, error) {
