@@ -55,9 +55,9 @@ func (n nutsdbStore) Get(key []byte) ([]byte, error) {
 	var (
 		value []byte
 	)
-	err := n.db.View(func(tx *nutsdb.Tx) error {
-		value, _ = tx.Get(Bucket, key)
-		return nil
+	err := n.db.View(func(tx *nutsdb.Tx) (e error) {
+		value, e = tx.Get(Bucket, key)
+		return
 	})
 	return value, err
 }
