@@ -43,7 +43,7 @@ func newNutsDBMerge(path string) (Store, error) {
 	options.EntryIdxMode = nutsdb.HintKeyAndRAMIdxMode
 	options.SyncEnable = false
 	options.HintKeyAndRAMIdxCacheSize = 0
-	options.MergeInterval = time.Second * 10
+	options.MergeInterval = time.Second * 3
 	options.SegmentSize = 4 * nutsdb.MB
 	return newNutsDBCommon(path, options)
 }
@@ -82,5 +82,8 @@ func (n nutsdbStore) Delete(key []byte) error {
 }
 
 func (n nutsdbStore) Close() error {
+	if err := n.db.Merge(); err != nil {
+		panic(err)
+	}
 	return n.db.Close()
 }
