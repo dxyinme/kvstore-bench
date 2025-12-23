@@ -1,8 +1,6 @@
 package kv
 
 import (
-	"time"
-
 	"github.com/nutsdb/nutsdb"
 )
 
@@ -43,7 +41,6 @@ func newNutsDBMerge(path string) (Store, error) {
 	options.EntryIdxMode = nutsdb.HintKeyAndRAMIdxMode
 	options.SyncEnable = false
 	options.HintKeyAndRAMIdxCacheSize = 0
-	options.MergeInterval = time.Second * 3
 	options.SegmentSize = 4 * nutsdb.MB
 	return newNutsDBCommon(path, options)
 }
