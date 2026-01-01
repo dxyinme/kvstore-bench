@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -152,10 +153,16 @@ func benchmarkGet(opts options, db kv.Store, keys [][]byte) error {
 }
 
 func benchmarkDelete(opts options, db kv.Store, keys [][]byte) error {
+	if !opts.runDelete {
+		log.Println("skip benchmark delete")
+		return nil
+	}
 	valSrc := make([]byte, opts.maxValueSize)
 	if _, err := rand.Read(valSrc); err != nil {
 		return err
 	}
+
+	keysLen := len(keys)
 
 	var keysProcessed int64
 	err := concurrentBatch(keys, opts.concurrency, func(gid int, batch [][]byte) error {
@@ -163,7 +170,7 @@ func benchmarkDelete(opts options, db kv.Store, keys [][]byte) error {
 			if err := db.Delete(k); err != nil {
 				return err
 			}
-			showProgress(int(atomic.AddInt64(&keysProcessed, 1)), opts.numKeys)
+			showProgress(int(atomic.AddInt64(&keysProcessed, 1)), keysLen)
 		}
 		return nil
 	})
@@ -171,7 +178,7 @@ func benchmarkDelete(opts options, db kv.Store, keys [][]byte) error {
 		return err
 	}
 
-	showProgress(int(keysProcessed), opts.numKeys)
+	showProgress(int(keysProcessed), keysLen)
 	clearLine()
 	return nil
 }
@@ -225,7 +232,7 @@ func benchmark(opts options) error {
 	fmt.Printf("delete: %.3fs\t%d ops/s\n", elapsed, int(float64(opts.numKeys/2)/elapsed))
 
 	// Total stats.
-	fmt.Printf("\nput + get + delete(if it is nutsdb merge): %.3fs\n", totalElapsed)
+	fmt.Printf("\nput + get + delete( if delete selected ): %.3fs\n", totalElapsed)
 	if err := db.Close(); err != nil {
 		return err
 	}
