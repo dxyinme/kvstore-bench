@@ -2,7 +2,7 @@ module github.com/akrylysov/pogreb-bench
 
 go 1.24.0
 
-replace github.com/nutsdb/nutsdb v0.0.0 => ../nutsdb
+replace github.com/nutsdb/nutsdb v0.0.0 => ./lib/nutsdb
 
 require (
 	github.com/akrylysov/pogreb v0.10.0
@@ -19,6 +19,7 @@ require (
 
 require (
 	github.com/DataDog/zstd v1.4.5 // indirect
+	github.com/RussellLuo/timingwheel v0.0.0-20220218152713-54845bda3108 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bwmarrin/snowflake v0.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
