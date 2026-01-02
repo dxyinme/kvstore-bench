@@ -1,16 +1,20 @@
 package kv
 
 import (
+	"log"
+	"time"
+
 	"github.com/nutsdb/nutsdb"
 )
 
 type nutsdbStore struct {
-	db *nutsdb.DB
+	db       *nutsdb.DB
+	needWait bool
 }
 
 const Bucket = "Bucket"
 
-func newNutsDBCommon(path string, options nutsdb.Options) (Store, error) {
+func newNutsDBCommon(_ string, options nutsdb.Options, needWait bool) (Store, error) {
 	db, err := nutsdb.Open(options)
 	if err != nil {
 		return nil, err
@@ -23,7 +27,7 @@ func newNutsDBCommon(path string, options nutsdb.Options) (Store, error) {
 		return nil, err
 	}
 
-	return &nutsdbStore{db: db}, nil
+	return &nutsdbStore{db: db, needWait: needWait}, nil
 }
 
 func newNutsDB(path string) (Store, error) {
@@ -32,7 +36,30 @@ func newNutsDB(path string) (Store, error) {
 	options.EntryIdxMode = nutsdb.HintKeyAndRAMIdxMode
 	options.SyncEnable = false
 	options.HintKeyAndRAMIdxCacheSize = 0
-	return newNutsDBCommon(path, options)
+	return newNutsDBCommon(path, options, false)
+}
+
+func newNutsDBMerge(path string) (Store, error) {
+	options := nutsdb.DefaultOptions
+	options.Dir = path
+	options.EntryIdxMode = nutsdb.HintKeyAndRAMIdxMode
+	options.SyncEnable = false
+	options.HintKeyAndRAMIdxCacheSize = 0
+	options.SegmentSize = 4 * nutsdb.MB
+	options.MergeInterval = 2 * time.Minute
+	return newNutsDBCommon(path, options, true)
+}
+
+func newNutsDBMergeV2(path string) (Store, error) {
+	options := nutsdb.DefaultOptions
+	options.Dir = path
+	options.EntryIdxMode = nutsdb.HintKeyAndRAMIdxMode
+	options.SyncEnable = false
+	options.HintKeyAndRAMIdxCacheSize = 0
+	options.SegmentSize = 4 * nutsdb.MB
+	options.MergeInterval = 2 * time.Minute
+	options.EnableMergeV2 = true
+	return newNutsDBCommon(path, options, true)
 }
 
 func newNutsDBMmap(path string) (Store, error) {
@@ -42,7 +69,7 @@ func newNutsDBMmap(path string) (Store, error) {
 	options.SyncEnable = false
 	options.HintKeyAndRAMIdxCacheSize = 0
 	options.RWMode = nutsdb.MMap
-	return newNutsDBCommon(path, options)
+	return newNutsDBCommon(path, options, false)
 }
 
 func (n nutsdbStore) Put(key []byte, value []byte) error {
@@ -69,5 +96,9 @@ func (n nutsdbStore) Delete(key []byte) error {
 }
 
 func (n nutsdbStore) Close() error {
+	if n.needWait {
+		log.Println("wait for 10 minutes for merging")
+		<-time.After(10 * time.Minute)
+	}
 	return n.db.Close()
 }

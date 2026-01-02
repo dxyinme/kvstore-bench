@@ -20,6 +20,7 @@ type options struct {
 	path         string
 	compact      bool
 	profileMode  string
+	runDelete    bool
 }
 
 func main() {
@@ -34,6 +35,7 @@ func main() {
 	flag.StringVar(&opts.path, "p", "", "database path")
 	flag.BoolVar(&opts.compact, "compact", false, "write keys twice and run compaction after")
 	flag.StringVar(&opts.profileMode, "profile", "", "enable profile. cpu, mem, block or mutex")
+	flag.BoolVar(&opts.runDelete, "runDelete", false, "run delete option")
 
 	flag.Parse()
 
